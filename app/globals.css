@@ -1,26 +1,290 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-uno-red: #e23b3b;
+  --color-uno-yellow: #f2b705;
+  --color-uno-green: #2fa84f;
+  --color-uno-blue: #2d7df6;
+  --color-felt-900: #04140f;
+  --color-felt-800: #07211a;
+  --color-felt-700: #0b3126;
+  --color-felt-600: #10402f;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --uno-red: #e23b3b;
+  --uno-yellow: #f2b705;
+  --uno-green: #2fa84f;
+  --uno-blue: #2d7df6;
+}
+
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(120% 90% at 50% -10%, #14563f 0%, transparent 55%),
+    radial-gradient(90% 70% at 50% 110%, #0a2b21 0%, transparent 60%),
+    linear-gradient(180deg, #08221a 0%, #04120d 100%);
+  background-attachment: fixed;
+  color: #f2f6f4;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+/* --------------------------------- cards -------------------------------- */
+
+.uno-card {
+  position: relative;
+  flex: none;
+  border-radius: calc(var(--card-w) * 0.09);
+  background: #ffffff;
+  padding: calc(var(--card-w) * 0.045);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 6px 14px -6px rgba(0, 0, 0, 0.7),
+    0 2px 4px rgba(0, 0, 0, 0.35);
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    filter 140ms ease;
+  user-select: none;
+}
+
+.uno-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--card-w) * 0.065);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uno-card-inner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.28), transparent 45%);
+  pointer-events: none;
+}
+
+.uno-oval {
+  position: relative;
+  width: 76%;
+  height: 60%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-22deg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.uno-glyph {
+  transform: rotate(22deg);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.uno-corner {
+  position: absolute;
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.uno-corner.tl {
+  top: 5%;
+  left: 7%;
+}
+
+.uno-corner.br {
+  bottom: 5%;
+  right: 7%;
+  transform: rotate(180deg);
+}
+
+.uno-back {
+  position: relative;
+  flex: none;
+  border-radius: calc(var(--card-w) * 0.09);
+  background: #16171c;
+  padding: calc(var(--card-w) * 0.045);
+  box-shadow:
+    0 6px 14px -6px rgba(0, 0, 0, 0.7),
+    0 2px 4px rgba(0, 0, 0, 0.4);
+  transition: transform 140ms ease;
+}
+
+.uno-back-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: calc(var(--card-w) * 0.065);
+  background: var(--uno-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.uno-back-oval {
+  width: 82%;
+  height: 62%;
+  border-radius: 50%;
+  background: #16171c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-22deg);
+}
+
+.uno-back-oval span {
+  transform: rotate(22deg);
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.04em;
+}
+
+.playable-card {
+  cursor: pointer;
+}
+
+.playable-card:hover {
+  transform: translateY(-14px) scale(1.03);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 18px 26px -12px rgba(0, 0, 0, 0.8),
+    0 0 0 2px rgba(255, 255, 255, 0.9);
+  z-index: 20;
+}
+
+/* ------------------------------ animations ------------------------------ */
+
+@keyframes card-land {
+  0% {
+    transform: translateY(-26px) scale(0.82) rotate(-8deg);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(2px) scale(1.02) rotate(1deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1) rotate(var(--tilt, 0deg));
+    opacity: 1;
+  }
+}
+
+.card-land {
+  animation: card-land 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  animation: rise 260ms ease both;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.toast-in {
+  animation: toast-in 200ms ease both;
+}
+
+@keyframes turn-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(242, 183, 5, 0.55);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(242, 183, 5, 0);
+  }
+}
+
+.turn-pulse {
+  animation: turn-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translate3d(0, -12vh, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--drift, 0px), 112vh, 0) rotate(720deg);
+    opacity: 0.9;
+  }
+}
+
+.confetti-piece {
+  position: absolute;
+  top: 0;
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+  animation: confetti-fall var(--dur, 2.6s) linear var(--delay, 0s) infinite;
+}
+
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.zoom-in {
+  animation: zoom-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-land,
+  .rise,
+  .toast-in,
+  .turn-pulse,
+  .confetti-piece,
+  .zoom-in {
+    animation: none !important;
+  }
 }
